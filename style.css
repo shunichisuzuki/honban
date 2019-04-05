@@ -1,0 +1,94 @@
+body{
+	font-family: Roboto, "Yu Gothic Medium", "游ゴシック Medium", YuGothic, "游ゴシック体", "ヒラギノ角ゴ Pro W3", "メイリオ", sans-serif;
+	line-height: 1.75;
+	font-size: 16px;
+}
+
+
+/*　パディングをサイズ内側にする処理　*/
+* {
+	padding:0;
+	margin:0;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+/* ここから */
+.jump {
+  animation: 0.5s jump infinite alternate linear;
+}
+@keyframes jump {
+  to { transform: transtateY(0); }
+  from { transform: translateY(4px); }
+}
+
+.box1{
+  display: flex;
+}
+
+/* コインページ関連の設定 */
+.coin_box{
+  display: flex;
+  align-items: center;
+  /* justify-content: center; */
+}
+.imageCover1 {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+.imageCover1 .baseImage {
+    width: 100%;
+    height: 100%;
+}
+.imageCover1 .coverImage {
+    position: absolute;
+    right: -140px;
+    bottom: -100px;
+    width: 100%;
+    height: 100%;
+}
+.imageCover1 .coverImage2 {
+    position: absolute;
+    right: -700px;
+    bottom: -100px;
+    width: 100%;
+    height: 100%;
+}
+
+.text_box{
+  /* display: flex; */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.balloon1-right {
+  position: relative;
+  display: inline-block;
+  margin: 1.5em 15px 1.5em 0;
+  padding: 7px 10px;
+  min-width: 120px;
+  max-width: 100%;
+  color: #555;
+  font-size: 16px;
+  background: #e0edff;
+}
+
+.balloon1-right:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  margin-top: -15px;
+  border: 15px solid transparent;
+  border-left: 15px solid #e0edff;
+}
+
+.balloon1-right p {
+  margin: 0;
+  padding: 0;
+}

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <title>SpaceLearner -めだる-</title>
+</head>
+
+<body>
+    <script src="https://www.gstatic.com/firebasejs/5.9.2/firebase.js"></script>
+    <!-- <script src="https://www.gstatic.com/firebasejs/5.8.4/firebase-app.js"></script> -->
+    <!-- <script src="https://www.gstatic.com/firebasejs/5.8.4/firebase-firestore.js"></script> -->
+    <!-- ログイン部分はいったん省略 3/31 -->
+    <h1>めだる を いくつ もっているかな？</h1>
+
+    <div class="imageCover1">
+
+        <img src="img/coin_book.jpg" alt="コインホルダー" class="baseImage">
+
+        <div class="coverImage">
+            <div class="coin_box">
+                <div><img id="01_taiyou" src="img/hatena.png" alt="太陽"></div>
+                <div><img id="02_suisei" src="img/hatena.png" alt="水星"></div>
+                <div><img id="03_kinsei" src="img/hatena.png" alt="金星"></div>
+            </div>
+            <div class="coin_box">
+                <div><img id="04_chikyuu" src="img/hatena.png" alt="地球"></div>
+                <div><img id="05_kasei" src="img/hatena.png" alt="火星"></div>
+                <div><img id="06_mokusei" src="img/hatena.png" alt="木星"></div>
+            </div>
+            <div class="coin_box">
+                <div><img id="07_dosei" src="img/hatena.png" alt="土星"></div>
+                <div><img id="08_tennousei" src="img/hatena.png" alt="天王星"></div>
+                <div><img id="09_kaiousei" src="img/hatena.png" alt="海王星 "></div>
+            </div>
+        </div>
+
+        <div class="coverImage2">
+            <div class="coin_box">
+                <div><img id="01_ohitsuji" src="img/hatena.png" alt="牡羊座"></div>
+                <div><img id="02_oushi" src="img/hatena.png" alt="牡牛座"></div>
+                <div><img id="03_futago" src="img/hatena.png" alt="双子座"></div>
+            </div>
+            <div class="coin_box">
+                <div><img id="04_kani" src="img/hatena.png" alt="蟹座"></div>
+                <div><img id="05_shishi" src="img/hatena.png" alt="獅子座"></div>
+                <div><img id="06_otome" src="img/hatena.png" alt="乙女座"></div>
+            </div>
+            <div class="coin_box">
+                <div><img id="07_tenbin" src="img/hatena.png" alt="天秤座"></div>
+                <div><img id="08_sasori" src="img/hatena.png" alt="蠍座"></div>
+                <div><img id="09_ite" src="img/hatena.png" alt="射手座"></div>
+            </div>
+            <div class="coin_box">
+                <div><img id="10_yagi" src="img/hatena.png" alt="山羊座"></div>
+                <div><img id="11_mizugame" src="img/hatena.png" alt="水瓶座"></div>
+                <div><img id="12_uo" src="img/hatena.png" alt="魚座"></div>
+            </div>
+        </div>
+
+    </div>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "",
+            authDomain: "testapp-8cd49.firebaseapp.com",
+            databaseURL: "https://testapp-8cd49.firebaseio.com",
+            projectId: "testapp-8cd49",
+            storageBucket: "testapp-8cd49.appspot.com",
+            messagingSenderId: "780005627723"
+        };
+        firebase.initializeApp(config);
+    </script>
+
+    <!-- <script>
+        console.log(document.getElementById("taiyou").id);
+        document.getElementById("taiyou").src = "img/_medal_taiyou.png";
+    </script> -->
+
+    <script>
+        var currentId = '2';
+        var currentUser = 'suzuki';
+
+        var starCountRef = firebase.database().ref().child('users/' + currentId);
+        starCountRef.on('value', function (snapshot) {
+            snapshot.forEach(function (children) {
+                anyKey = children.key;
+                children.forEach(function (magosnap) {
+                    if (magosnap.key == 'taiyoukei') {
+                        magosnap.forEach(function (himagosnap) {
+                            console.log(himagosnap.val().flag);
+                            anyWakusei = himagosnap.key;
+                            if (himagosnap.val().flag == 1) {
+                                document.getElementById(anyWakusei).src = "img/medal_taiyoukei/medal_" + anyWakusei + ".png";
+                            }
+                        });
+                    }
+                    if (magosnap.key == 'shinwa') {
+                        magosnap.forEach(function (himagosnap) {
+                            console.log(himagosnap.val().flag);
+                            anyShinwa = himagosnap.key;
+                            console.log(anyShinwa);
+                            if (himagosnap.val().flag == 1) {
+                                document.getElementById(anyShinwa).src = "img/medal_shinwa/medal_" + anyShinwa + ".png";
+                            }
+                        });
+                    }
+                });
+            });
+        });
+
+    </script>
+
+</body>
+
+</html>

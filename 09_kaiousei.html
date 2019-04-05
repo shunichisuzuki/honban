@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<!-- Webへの動画埋め込み：http://www.html5-memo.com/webtips/responsive-movie/ -->
+<!-- 動画の終了判定：https://qiita.com/grapswiz/items/4ce35afa8bf30d7c0343 -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <title>SpaceLearner -かいおうせい 海王星-</title>
+</head>
+
+<body>
+    <!-- <body onLoad="disp()"> -->
+    <!-- ログイン部分はいったん省略 3/31 -->
+    <h1>海王星についての動画</h1>
+    <div id="movie"></div>
+    <div></div>
+
+    <script src="https://www.gstatic.com/firebasejs/5.9.2/firebase.js"></script>
+    <script src="https://cdn.firebase.com/js/client/2.0.4/firebase.js"></script>
+    <script>
+
+        //currentId と currentUser の部分は、認証機能実装時に改めて考えるので、
+        //今は固定のままとする。
+        var currentId = '2';
+        var currentUser = 'suzuki';
+        var currentPage = '09_kaiousei';
+
+        // IFrame Player API の読み込み
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        // YouTubeの埋め込み
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('movie', {
+                height: '360',
+                width: '640',
+                videoId: 'XY5l6Py_YjA',
+                playerVars: {
+                    autoplay: 1,
+                    showinfo: 0,
+                    rel: 0,
+                    iv_load_policy: 3,
+                    modestbranding: 1,
+                },
+                events: {
+                    onReady: onPlayerReady,
+                    onStateChange: onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            var player = event.target; // YT.Playerオブジェクト
+        }
+
+        function onPlayerStateChange(event) {
+            var playerState = event.data;
+            var player = event.target; // YT.Playerオブジェクト
+            var time = player.getDuration();
+            var getCT = player.getCurrentTime();
+            // console.log(getCT + ' / ' + time);
+
+            // Initialize Firebase
+            // console.log(firebase.apps.length);
+            var config = {
+                apiKey: "",
+                authDomain: "testapp-8cd49.firebaseapp.com",
+                databaseURL: "https://testapp-8cd49.firebaseio.com",
+                projectId: "testapp-8cd49",
+                storageBucket: "testapp-8cd49.appspot.com",
+                messagingSenderId: "780005627723"
+            };
+
+            // ↓ のやり方では、エラーが出る。
+            // 理由は、初期化を二重で実行することになるため。
+            // firebase.initializeApp(config);
+
+            // console.log(firebase.apps.length);
+            // if 文で firebase.apps の長さを確認し、0 の場合は initializeApp を実行する。
+            if (!firebase.apps.length) {
+                firebase.initializeApp(config);
+            }
+
+            var update_num = 0;
+            var newData = {};
+            var starCountRef = firebase.database().ref().child('users/' + currentId);
+            starCountRef.on('value', function (snapshot) {
+                // console.log(snapshot.val());
+                snapshot.forEach(function (children) {  //任意の文字列についてループ
+                    anyKey = children.key;
+                    // console.log(children.val().taiyoukei);
+                    //children.val().userIdとかで必要な値を取ればOK
+                    children.forEach(function (magosnap) {
+                        // console.log(magosnap.val());
+                        magosnap.forEach(function (himagosnap) {
+                            // console.log(himagosnap.key);
+                            if (himagosnap.key == currentPage) {
+                                var currentFlag = '';
+                                if (getCT != time) {
+                                    //動画が視聴中の場合は、元の数字を格納する。
+                                    currentFlag = himagosnap.val().flag;
+                                    // console.log(currentFlag);
+                                } else {
+                                    //動画をすべて視聴したら、1を格納する。
+                                    currentFlag = 1;
+                                }
+                                var newData = writeNewPost(getCT, currentFlag);
+                                // console.log(newData);
+                                var updates = {};
+                                updates['users/' + currentId + '/' + anyKey + '/taiyoukei/' + currentPage] = newData;
+                                // console.log(update_num);
+
+                                // ★★ ポイントとなる部分 ★★
+                                // ★firebaseの値を更新すると、onPlayerStateChange(event) が
+                                // ★実行されるため、update_num が初期値の時だけ更新されるようにする。
+                                // ★そうしないと、call stack と呼ばれるリソースを最大まで消費し、
+                                // ★動作が重くなるため。
+                                if (update_num == 0) {
+                                    firebase.database().ref().update(updates);
+                                    update_num = 1;
+                                }
+                            }
+                        });
+                    });
+                });
+            });
+        }
+
+        function writeNewPost(getCT, currentFlag) {
+            // console.log(getCT + '/' + currentFlag);
+            var tmpData = {
+                currentTime: getCT,
+                flag: currentFlag
+            };
+            return tmpData;
+            // console.log(postData);
+        }
+
+        // ■■■■ 時間経過により自動で再生時間を記録することも考えているので、以下のコードは残す。 ■■■■
+        // var start = new Date();
+        // // 初期化
+        // var hour = 0;
+        // var min = 0;
+        // var sec = 0;
+        // var now = 0;
+        // var datet = 0;
+        // function disp() {
+        //     now = new Date();
+        //     datet = parseInt((now.getTime() - start.getTime()) / 1000);
+        //     hour = parseInt(datet / 3600);
+        //     min = parseInt((datet / 60) % 60);
+        //     sec = datet % 60;
+        //     if ((sec % 10) == 0) {
+
+        //     }
+        //     setTimeout("disp()", 1000);
+        // }
+
+    </script>
+
+</body>
+
+</html>

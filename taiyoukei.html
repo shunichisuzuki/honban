@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <title>SpaceLearner -たいようけい 太陽系-</title>
+</head>
+
+<body>
+    <!-- ログイン部分はいったん省略 3/31 -->
+
+    <script src="https://www.gstatic.com/firebasejs/5.9.2/firebase.js"></script>
+    <!-- <script src="https://www.gstatic.com/firebasejs/5.8.4/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.8.4/firebase-firestore.js"></script> -->
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "",
+            authDomain: "testapp-8cd49.firebaseapp.com",
+            databaseURL: "https://testapp-8cd49.firebaseio.com",
+            projectId: "testapp-8cd49",
+            storageBucket: "testapp-8cd49.appspot.com",
+            messagingSenderId: "780005627723"
+        };
+        firebase.initializeApp(config);
+    </script>
+
+    <script>
+        //currentId と currentUser の部分は、認証機能実装時に改めて考えるので、
+        //今は固定のままとする。
+        var currentId = '2';
+        var currentUser = 'suzuki';
+
+        var num = 0;
+        // var userExist = '';
+        var dataRef = firebase.database().ref('users');
+        // var newId = '';
+        var checkkaisuu = 0;
+        dataRef.on('value', function (snapshot) {
+            // console.log(snapshot.val().length);
+            // for (i = 0; i < snapshot.val().length; i++) {
+            snapshot.forEach(function (children) {
+                // console.log(children.val().name);
+                num += 1;
+                if ((currentId != String(num) || currentUser != children.val().name) && checkkaisuu == 0) {
+                    // console.log('ユーザが登録されていません。');
+                    checkkaisuu += 1;
+                    // console.log('チェック回数: ' + checkkaisuu);
+                    // var newPostRef = firebase.database().ref('users/' + newId);
+                    // newPostRef.push({
+                    //     name: currentUser,
+                    //     taiyoukei: {
+                    //         suisei: { flag: 'N', currentTime: 0 },
+                    //         kinsei: { flag: 'N', currentTime: 0 },
+                    //         chikyuu: { flag: 'N', currentTime: 0 },
+                    //         kasei: { flag: 'N', currentTime: 0 },
+                    //         mokusei: { flag: 'N', currentTime: 0 },
+                    //         dosei: { flag: 'N', currentTime: 0 },
+                    //         tennousei: { flag: 'N', currentTime: 0 },
+                    //         kaiousei: { flag: 'N', currentTime: 0 }
+                    //     }
+                    // });
+                } else {
+                    // console.log('ユーザ: ' + currentUser + 'は登録されています。');
+                    checkkaisuu += 1;
+                    // console.log('チェック回数: ' + checkkaisuu);
+                }
+            });
+        });
+    </script>
+
+    <h1>たいようけいについて</h1>
+    <h1>(太陽系について)</h1>
+
+    <div class="box1" id="test"></div>
+
+    <div id="video"></div>
+
+    <script>
+        function draw1() {
+            // var htmlcode = "";
+            var htmlcode;
+            var len = 1;
+            var div = document.getElementById('test');
+
+            var starCountRef = firebase.database().ref().child('users/' + currentId);
+            starCountRef.on('value', function (snapshot) {
+                // console.log(snapshot.val());
+                snapshot.forEach(function (children) {  //任意の文字列についてループ
+                    anyKey = children.key;
+                    // console.log(anyKey);
+                    //children.val().userIdとかで必要な値を取ればOK
+                    children.forEach(function (magosnap) {
+                        // console.log(magosnap.val());
+                        // console.log(magosnap.key);
+                        if (magosnap.key == 'taiyoukei') {
+                            // console.log(magosnap.val());
+                            var htmlcode = "";
+                            magosnap.forEach(function (himagosnap) {
+                                // console.log(himagosnap.key);
+                                // console.log(himagosnap.val());
+                                if (himagosnap.key == '01_taiyou') {
+                                    htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/taiyoukei/' + himagosnap.key + '.png"></a></div>';
+                                    htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
+                                    // console.log(htmlcode);
+                                }
+                                if (himagosnap.key == '02_suisei') {
+                                    var tmp = 0;
+                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/taiyoukei/01_taiyou');
+                                    tmpRef.on('value', function (tmpsnap) {
+                                        tmp = tmpsnap.val().flag;
+                                        // console.log(tmp);
+                                    });
+                                    if (tmp == 1) {
+                                        htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/taiyoukei/' + himagosnap.key + '.jpg"></a></div>';
+                                    }
+                                    htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
+                                    // console.log(htmlcode);
+                                }
+                                if (himagosnap.key == '03_kinsei') {
+                                    var tmp = 0;
+                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/taiyoukei/02_suisei');
+                                    tmpRef.on('value', function (tmpsnap) {
+                                        tmp = tmpsnap.val().flag;
+                                        // console.log(tmp);
+                                    });
+                                    if (tmp == 1) {
+                                        htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/taiyoukei/' + himagosnap.key + '.jpg"></a></div>';
+                                    }
+                                    htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
+                                }
+                                if (himagosnap.key == '04_chikyuu') {
+                                    var tmp = 0;
+                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/taiyoukei/03_kinsei');
+                                    tmpRef.on('value', function (tmpsnap) {
+                                        tmp = tmpsnap.val().flag;
+                                        // console.log(tmp);
+                                    });
+                                    if (tmp == 1) {
+                                        htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/taiyoukei/' + himagosnap.key + '.jpg"></a></div>';
+                                    }
+                                    htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
+                                }
+                                if (himagosnap.key == '05_kasei') {
+                                    var tmp = 0;
+                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/taiyoukei/04_chikyuu');
+                                    tmpRef.on('value', function (tmpsnap) {
+                                        tmp = tmpsnap.val().flag;
+                                        // console.log(tmp);
+                                    });
+                                    if (tmp == 1) {
+                                        htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/taiyoukei/' + himagosnap.key + '.jpg"></a></div>';
+                                    }
+                                    htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
+                                }
+                                if (himagosnap.key == '06_mokusei') {
+                                    var tmp = 0;
+                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/taiyoukei/05_kasei');
+                                    tmpRef.on('value', function (tmpsnap) {
+                                        tmp = tmpsnap.val().flag;
+                                        // console.log(tmp);
+                                    });
+                                    if (tmp == 1) {
+                                        htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/taiyoukei/' + himagosnap.key + '.jpg"></a></div>';
+                                    }
+                                    htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
+                                }
+                                if (himagosnap.key == '07_dosei') {
+                                    var tmp = 0;
+                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/taiyoukei/06_mokusei');
+                                    tmpRef.on('value', function (tmpsnap) {
+                                        tmp = tmpsnap.val().flag;
+                                        // console.log(tmp);
+                                    });
+                                    if (tmp == 1) {
+                                        htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/taiyoukei/' + himagosnap.key + '.jpg"></a></div>';
+                                    }
+                                    htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
+                                }
+                                if (himagosnap.key == '08_tennousei') {
+                                    var tmp = 0;
+                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/taiyoukei/07_dosei');
+                                    tmpRef.on('value', function (tmpsnap) {
+                                        tmp = tmpsnap.val().flag;
+                                        // console.log(tmp);
+                                    });
+                                    if (tmp == 1) {
+                                        htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/taiyoukei/' + himagosnap.key + '.jpg"></a></div>';
+                                    }
+                                    htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
+                                }
+                                if (himagosnap.key == '09_kaiousei') {
+                                    var tmp = 0;
+                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/taiyoukei/08_tennousei');
+                                    tmpRef.on('value', function (tmpsnap) {
+                                        tmp = tmpsnap.val().flag;
+                                        // console.log(tmp);
+                                    });
+                                    if (tmp == 1) {
+                                        htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/taiyoukei/' + himagosnap.key + '.jpg"></a></div>';
+                                    }
+                                }
+                            });
+                            console.log(htmlcode);
+                            div.innerHTML = htmlcode;
+                        }
+                        // console.log(htmlcode);
+                    });
+                });
+            });
+        }
+        draw1();
+    </script>
+
+</body>
+
+</html>
