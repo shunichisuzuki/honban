@@ -5,33 +5,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" type="text/css" href="style.css" />
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <title>SpaceLearner</title>
+    <title>my-sample-project</title>
+
+    <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-auth.js"></script>
+
+    <script src="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.css" />
+    <script type="text/javascript" src="ifb.js"></script>
+
+    <script>
+        // FirebaseUIインスタンス初期化
+        var ui = new firebaseui.auth.AuthUI(firebase.auth());
+
+        // FirebaseUIの各種設定
+        var uiConfig = {
+            callbacks: {
+                signInSuccess: function (currentUser, credential, redirectUrl) {
+                    // サインイン成功時のコールバック関数
+                    // 戻り値で自動的にリダイレクトするかどうかを指定
+                    return true;
+                },
+                uiShown: function () {
+                    // FirebaseUIウィジェット描画完了時のコールバック関数
+                    // 読込中で表示しているローダー要素を消す
+                    document.getElementById('loader').style.display = 'none';
+                }
+            },
+            // リダイレクトではなく、ポップアップでサインインフローを表示
+            signInFlow: 'popup',
+            signInSuccessUrl: 'top.html',
+            signInOptions: [
+                // サポートするプロバイダ(メールアドレス)を指定
+                firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+                // firebase.auth.EmailAuthProvider.PROVIDER_ID,
+            ],
+            // Terms of service url.(サービス利用規約ページの)
+            // tosUrl: '<your-tos-url>'
+        };
+
+        // FirebaseUI描画開始
+        ui.start('#firebaseui-auth-container', uiConfig);
+    </script>
 </head>
 
 <body>
-    <!-- ログイン部分はいったん省略 3/31 -->
-    <div class="balloon jump">
-        なにについて しりたいのかな？<br>
-        <div class="box1">
-            <div class="text_box">
-                <a href="taiyoukei.html" target="_blank"><img width="100%" src="img/taiyoukei.jpg" alt="たいようけい"></a>
-                <div>わくせい</div>
-            </div>
-            <div class="text_box">
-                <a href="shinwa.html" target="_blank"><img width="100%" src="img/shinwa.png" alt="しんわ"></a>
-                <div>しんわ</div>
-            </div>
-            <div class="text_box">
-                <a href="hoshizora.html" target="_blank"><img width="100%" src="img/hoshizora.jpg" alt="ほしぞら"></a>
-                <div>ほしぞら</div>
-            </div>
-            <img src="img/doctor.jpg" alt="博士の画像">
-        </div>
-    </div>
-    <br><br><br><br>
-    <a href="coin.html" target="_blank"><img width="5%" src="img/coin.png" alt="コイン"></a>
+    <center>
+        <h1>うちゅうってなんだ？</h1>
+        <br>
+        <br>
+        <h2>宇宙(惑星、星座、神話)ついて学習できるサイト(<font color="red">テスト版</font>)です。</h2>
+        <h2>このサイトを通じて、宇宙に興味を持っていただけますと幸いです。</h2>
+    </center>
+    <br>
+    <br>
+    <h3>
+        なお、以下 2 点についてご認識ください。<br>
+        　(1)ログインの際、メールアドレスが保管されます。<br>
+        　(2)本サイトの使用により問題が発生した際、責任を取りかねる場合があります。<br>
+        これら 2 点を許容いただける場合のみ、次のボタンをクリックしてログインしてください。
+    </h3>
+    <br>
+    <center>
+        <div id="firebaseui-auth-container"></div>
+        <div id="loader">Loading...</div>
+    </center>
 </body>
 
 </html>

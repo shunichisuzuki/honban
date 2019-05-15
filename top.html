@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <title>うちゅうってなんだ？</title>
+</head>
+
+<body>
+    <!-- ログイン部分はいったん省略 3/31 -->
+    <div class="balloon jump">
+        なにについて しりたいのかな？<br>
+        <div class="box1">
+            <div class="text_box">
+                <a href="taiyoukei.html" target="_blank"><img width="100%" src="img/taiyoukei.jpg" alt="たいようけい"></a>
+                <div>わくせい</div>
+            </div>
+            <div class="text_box">
+                <a href="shinwa.html" target="_blank"><img width="100%" src="img/shinwa.png" alt="しんわ"></a>
+                <div>しんわ</div>
+            </div>
+            <div class="text_box">
+                <a href="hoshizora.html" target="_blank"><img width="100%" src="img/hoshizora.jpg" alt="ほしぞら"></a>
+                <div>ほしぞら</div>
+            </div>
+            <img src="img/doctor.jpg" alt="博士の画像">
+        </div>
+    </div>
+    <br><br><br><br>
+    <a href="coin.html" target="_blank"><img width="5%" src="img/coin.png" alt="コイン"></a>
+
+    <!-- 各ページに記載する -->
+    <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase.js"></script>
+    <script type="text/javascript" src="logincheck.js"></script>
+    <script type="text/javascript" src="ifb.js"></script>
+
+    <script>
+        if (!firebase.apps.length) {
+            firebase.initializeApp(config);
+        }
+
+        // ユーザのメールアドレス取得
+        // ⇒firebaseに各動画視聴の時間とフラグを格納する
+        //   枠を作成するかの判断に使用する。
+        var umail = '';
+        var promise = new Promise(function (resolve, reject) {
+            firebase.auth().onAuthStateChanged((user) => {
+                let status = document.querySelector('#status');
+                if (user) {
+                    console.log("user: " + user.email);
+                    console.log("Singed-in");
+                    resolve(user.email);
+                } else {
+                    console.log("NOT Singed-in");
+                }
+            });
+        });
+        promise.then(function (result) {
+            umail = result;
+            console.log("email: " + umail);
+        });
+
+        //5秒後にユーザ存在チェック処理を実行
+        setTimeout("UserExistCheck(umail)", 5000);
+
+        //既存ユーザかどうかをチェック
+        function UserExistCheck(mail) {
+            var promise2 = new Promise(function (resolve, reject) {
+                var hit = 0;
+                var currentId = 0;
+                var anyKey = '';
+                var userChkRef = firebase.database().ref().child('users/');
+                userChkRef.on('value', function (snapshot) {
+                    //snapshot.key は users。
+                    snapshot.forEach(function (children) {
+                        // console.log("■■■ children.key: " + children.key); //1以上の値
+                        currentId = children.key;
+                        children.forEach(function (magosnap) {
+                            // console.log("magosnap.key: " + magosnap.key); //不規則文字列
+                            anyKey = magosnap.key;
+                            magosnap.forEach(function (himagosnap) {
+                                // console.log("himagosnap.key: " + himagosnap.key);
+                                if (himagosnap.key == "name") {
+                                    var tmp = '';
+                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey);
+                                    tmpRef.on('value', function (tmpsnap) {
+                                        tmp = tmpsnap.val().name; //メールアドレスを取得。
+                                        console.log("tmp: " + tmp);
+                                        console.log("umail@tmpsnap: " + mail);
+                                        if (mail == tmp) {
+                                            // console.log("■■ 登録済み。");
+                                            hit = 1;
+                                        }
+                                    });
+                                }
+                                // console.log("hit@himagosnap: " + hit);
+                            });
+                            // console.log("hit@magosnap: " + hit);
+                        });
+                        // console.log("hit@children: " + hit);
+                    });
+                    console.log("hit@snapshot: " + hit);
+                    if (hit == 0) {
+                        console.log("■■ 未登録。");
+                    } else {
+                        // hit = 1;
+                        console.log("■■ 登録済み。");
+                    }
+                    resolve(hit);
+                });
+            });
+            promise2.then(function (result2) {
+                console.log("result2: " + result2);
+                // 新規ユーザの場合、firebaseに各動画視聴の時間とフラグを格納する
+                // 枠を作る。
+                if (result2 == 0) {
+                    console.log("insNum@promise2.then: " + insNum);
+                    console.log("### User Data Creation will start.");
+                    var insNum = 0;
+                    var starCountRef = firebase.database().ref().child('users/');
+                    starCountRef.on('value', function (snapshot) {
+                        console.log("snapshot.val().length: " + snapshot.val().length);
+                        var currentUserNum = snapshot.val().length - 1;
+                        console.log("currentUserNum: " + currentUserNum);
+                        var nextUserNum = snapshot.val().length;
+                        if (insNum == 0) {
+                            var promise = new Promise(function (resolve, reject) {
+                                insNum++;
+                                console.log("### insNum was incremented.");
+                                resolve(insNum);
+                            });
+                            promise.then(function (result) {
+                                console.log("### newUserDataInput will started.");
+                                newUserDataInput(nextUserNum);
+                                console.log("### newUserDataInput was finished.");
+                            });
+                        }
+                    });
+                } else {
+                    console.log("User " + mail + " is exist.");
+                }
+            });
+        }
+
+        //firebaseに各動画視聴の時間とフラグを格納する処理本体
+        function newUserDataInput(num) {
+            var userId = num;
+            console.log("userId: " + userId);
+            firebase.database().ref('users/' + userId).push({
+                name: umail,
+                shinwa: {
+                    "01_ohitsuji": { currentTime: 0, flag: 0 },
+                    "02_oushi": { currentTime: 0, flag: 0 },
+                    "03_futago": { currentTime: 0, flag: 0 },
+                    "04_kani": { currentTime: 0, flag: 0 },
+                    "05_shishi": { currentTime: 0, flag: 0 },
+                    "06_otome": { currentTime: 0, flag: 0 },
+                    "07_tenbin": { currentTime: 0, flag: 0 },
+                    "08_sasori": { currentTime: 0, flag: 0 },
+                    "09_ite": { currentTime: 0, flag: 0 },
+                    "10_yagi": { currentTime: 0, flag: 0 },
+                    "11_mizugame": { currentTime: 0, flag: 0 },
+                    "12_uo": { currentTime: 0, flag: 0 }
+                },
+                taiyoukei: {
+                    "01_taiyou": { currentTime: 0, flag: 0 },
+                    "02_suisei": { currentTime: 0, flag: 0 },
+                    "03_kinsei": { currentTime: 0, flag: 0 },
+                    "04_chikyuu": { currentTime: 0, flag: 0 },
+                    "05_kasei": { currentTime: 0, flag: 0 },
+                    "06_mokusei": { currentTime: 0, flag: 0 },
+                    "07_dosei": { currentTime: 0, flag: 0 },
+                    "08_tennousei": { currentTime: 0, flag: 0 },
+                    "09_keiousei": { currentTime: 0, flag: 0 }
+                }
+            });
+        }
+    </script>
+
+</body>
+
+</html>

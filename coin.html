@@ -7,7 +7,14 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" type="text/css" href="style.css" />
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <title>SpaceLearner -めだる-</title>
+    <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase.js"></script>
+    <script type="text/javascript" src="logincheck.js"></script>
+    <script type="text/javascript" src="ifb.js"></script>
+    <script type="text/javascript" src="functions.js"></script>
+
+    <title>うちゅうってなんだ？ -めだる-</title>
 </head>
 
 <body>
@@ -64,55 +71,49 @@
 
     </div>
     <script>
-        // Initialize Firebase
-        var config = {
-            apiKey: "",
-            authDomain: "testapp-8cd49.firebaseapp.com",
-            databaseURL: "https://testapp-8cd49.firebaseio.com",
-            projectId: "testapp-8cd49",
-            storageBucket: "testapp-8cd49.appspot.com",
-            messagingSenderId: "780005627723"
-        };
-        firebase.initializeApp(config);
-    </script>
+        // firebase 初期化
+        if (!firebase.apps.length) {
+            firebase.initializeApp(config);
+        }
 
-    <!-- <script>
-        console.log(document.getElementById("taiyou").id);
-        document.getElementById("taiyou").src = "img/_medal_taiyou.png";
-    </script> -->
+        // var currentId = '2';
+        // var currentUser = 'suzuki';
+        var currentId = 0;
+        var umail = '';
 
-    <script>
-        var currentId = '2';
-        var currentUser = 'suzuki';
+        setTimeout("getmail()", 2000);
+        setTimeout("getId(umail)", 4000);
+        setTimeout("getcoin(currentId)", 5000);
 
-        var starCountRef = firebase.database().ref().child('users/' + currentId);
-        starCountRef.on('value', function (snapshot) {
-            snapshot.forEach(function (children) {
-                anyKey = children.key;
-                children.forEach(function (magosnap) {
-                    if (magosnap.key == 'taiyoukei') {
-                        magosnap.forEach(function (himagosnap) {
-                            console.log(himagosnap.val().flag);
-                            anyWakusei = himagosnap.key;
-                            if (himagosnap.val().flag == 1) {
-                                document.getElementById(anyWakusei).src = "img/medal_taiyoukei/medal_" + anyWakusei + ".png";
-                            }
-                        });
-                    }
-                    if (magosnap.key == 'shinwa') {
-                        magosnap.forEach(function (himagosnap) {
-                            console.log(himagosnap.val().flag);
-                            anyShinwa = himagosnap.key;
-                            console.log(anyShinwa);
-                            if (himagosnap.val().flag == 1) {
-                                document.getElementById(anyShinwa).src = "img/medal_shinwa/medal_" + anyShinwa + ".png";
-                            }
-                        });
-                    }
+        function getcoin(Id) {
+            var starCountRef = firebase.database().ref().child('users/' + Id);
+            starCountRef.on('value', function (snapshot) {
+                snapshot.forEach(function (children) {
+                    anyKey = children.key;
+                    children.forEach(function (magosnap) {
+                        if (magosnap.key == 'taiyoukei') {
+                            magosnap.forEach(function (himagosnap) {
+                                console.log(himagosnap.val().flag);
+                                anyWakusei = himagosnap.key;
+                                if (himagosnap.val().flag == 1) {
+                                    document.getElementById(anyWakusei).src = "img/medal_taiyoukei/medal_" + anyWakusei + ".png";
+                                }
+                            });
+                        }
+                        if (magosnap.key == 'shinwa') {
+                            magosnap.forEach(function (himagosnap) {
+                                console.log(himagosnap.val().flag);
+                                anyShinwa = himagosnap.key;
+                                console.log(anyShinwa);
+                                if (himagosnap.val().flag == 1) {
+                                    document.getElementById(anyShinwa).src = "img/medal_shinwa/medal_" + anyShinwa + ".png";
+                                }
+                            });
+                        }
+                    });
                 });
             });
-        });
-
+        }
     </script>
 
 </body>
