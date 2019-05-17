@@ -15,7 +15,7 @@
     <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase.js"></script>
     <script type="text/javascript" src="logincheck.js"></script>
 
-    <title>うちゅうってなんだ？ -さそりざ 蠍座-</title>
+    <title>うちゅうってなんだ？ -ちきゅう 地球-</title>
 
     <script src="https://www.gstatic.com/firebasejs/5.9.2/firebase.js"></script>
     <script src="https://cdn.firebase.com/js/client/2.0.4/firebase.js"></script>
@@ -25,7 +25,7 @@
 </head>
 
 <body>
-    <h1>蠍座についての動画</h1>
+    <h1>地球についての動画</h1>
     <div id="movie"></div>
     <div></div>
 
@@ -37,7 +37,7 @@
             firebase.initializeApp(config);
         }
 
-        var currentPage = '08_sasori';
+        var currentPage = '05_chikyuu';
 
         var currentId = 0;
         var currentTime = 0;
@@ -81,7 +81,7 @@
             player = new YT.Player('movie', {
                 height: '360',
                 width: '640',
-                videoId: 'aDKqgiO7HG8',
+                videoId: 'OMKtxtaXELA',
                 playerVars: {
                     autoplay: 1,
                     showinfo: 0,

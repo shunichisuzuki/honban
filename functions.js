@@ -13,40 +13,23 @@ function getId(mail) {
                     // console.log("magosnap.key: " + magosnap.key); //不規則文字列
                     anyKey = magosnap.key;
                     magosnap.forEach(function (himagosnap) {
-                        // console.log("himagosnap.key: " + himagosnap.key);
                         if (himagosnap.key == "name") {
                             var tmp = '';
                             var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey);
                             tmpRef.on('value', function (tmpsnap) {
                                 tmp = tmpsnap.val().name; //メールアドレスを取得。
-                                console.log("tmp: " + tmp);
-                                console.log("mail@tmpsnap: " + mail);
                                 if (mail == tmp) {
                                     resolve(currentId);
-                                    // console.log("■■ 登録済み。");
-                                    // hit++;
                                 }
                             });
                         }
-                        // console.log("hit@himagosnap: " + hit);
                     });
-                    // console.log("hit@magosnap: " + hit);
                 });
-                // console.log("hit@children: " + hit);
-                // if (hit == 0) {
-                //     console.log("■■ 未登録。");
-                // } else {
-                //     console.log("■■ 登録済み。");
-                // }
-                // resolve(currentId);
             });
-            // console.log("hit@snapshot: " + hit);
         });
     });
     promise2.then(function (result2) {
-        console.log("result2: " + result2);
         var currentId = result2;
-        console.log("currentId: " + currentId);
         console.log('### getId end.');
     });
 }
@@ -58,7 +41,6 @@ function getmail() {
         firebase.auth().onAuthStateChanged((user) => {
             let status = document.querySelector('#status');
             if (user) {
-                console.log("user: " + user.email);
                 console.log("Singed-in");
                 resolve(user.email);
             } else {
@@ -68,7 +50,6 @@ function getmail() {
     });
     promise.then(function (result) {
         umail = result;
-        console.log("email: " + umail);
         console.log('### get mail end.');
     });
 }
@@ -88,41 +69,23 @@ function getreturnId(mail) {
                     // console.log("magosnap.key: " + magosnap.key); //不規則文字列
                     anyKey = magosnap.key;
                     magosnap.forEach(function (himagosnap) {
-                        // console.log("himagosnap.key: " + himagosnap.key);
                         if (himagosnap.key == "name") {
                             var tmp = '';
                             var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey);
                             tmpRef.on('value', function (tmpsnap) {
                                 tmp = tmpsnap.val().name; //メールアドレスを取得。
-                                console.log("tmp: " + tmp);
-                                console.log("mail@tmpsnap: " + mail);
                                 if (mail == tmp) {
                                     resolve(currentId);
-                                    // console.log("■■ 登録済み。");
-                                    // hit++;
                                 }
                             });
                         }
-                        // console.log("hit@himagosnap: " + hit);
                     });
-                    // console.log("hit@magosnap: " + hit);
                 });
-                // console.log("hit@children: " + hit);
-                // if (hit == 0) {
-                //     console.log("■■ 未登録。");
-                // } else {
-                //     console.log("■■ 登録済み。");
-                // }
-                // resolve(currentId);
             });
-            // console.log("hit@snapshot: " + hit);
         });
     });
     promise2.then(function (result2) {
-        console.log("result2: " + result2);
         var Id = result2;
-        console.log("Id: " + Id);
-        // return Id;
         console.log('### getId end.');
     });
 }
@@ -164,4 +127,37 @@ function writeNewPost(getCT, currentFlag) {
         flag: currentFlag
     };
     return tmpData;
+}
+
+function qflagchange(Id, Page) {
+    console.log('### Flag Change start.');
+    if (!firebase.apps.length) {
+        firebase.initializeApp(config);
+    }
+    var update_num = 0;
+    var newData = {};
+    var starCountRef = firebase.database().ref().child('users/' + Id);
+    starCountRef.on('value', function (snapshot) {
+        snapshot.forEach(function (children) {  //任意の文字列についてループ
+            anyKey = children.key;
+            //children.val().userIdとかで必要な値を取ればOK
+            children.forEach(function (magosnap) {
+                magosnap.forEach(function (himagosnap) {
+                    if (himagosnap.key == Page) {
+                        var currentFlag = 1;
+                        var newData = { flag: currentFlag };
+                        var updates = {};
+                        updates['users/' + Id + '/' + anyKey + '/shinwa/' + Page] = newData;
+                        if (update_num == 0) {
+                            console.log('### Flag update start.');
+                            firebase.database().ref().update(updates);
+                            update_num = 1;
+                            console.log('### Flag update end.');
+                        }
+                    }
+                });
+            });
+        });
+    });
+    console.log('### Flag Change end.');
 }

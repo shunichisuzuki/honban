@@ -1,0 +1,13 @@
+{
+    "short_name": "うちゅう",
+    "name": "うちゅうってなんだ？",
+    "start_url": "https://utyuuttenanda.netlify.com/",
+    "display": "standalone",
+    "icons": [
+        {
+            "src": "s_icon.jpg",
+            "type": "image/png",
+            "sizes": "192x192"
+        }
+    ]
+}

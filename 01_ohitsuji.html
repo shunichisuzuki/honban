@@ -132,7 +132,7 @@
                                 }
                                 var newData = writeNewPost(getCT, currentFlag);
                                 var updates = {};
-                                updates['users/' + currentId + '/' + anyKey + '/taiyoukei/' + currentPage] = newData;
+                                updates['users/' + currentId + '/' + anyKey + '/shinwa/' + currentPage] = newData;
 
                                 if (update_num == 0) {
                                     firebase.database().ref().update(updates);

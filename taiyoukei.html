@@ -14,14 +14,12 @@
     <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase.js"></script>
     <!-- <script type="text/javascript" src="logincheck.js"></script> -->
     <script type="text/javascript" src="ifb.js"></script>
-    <!-- <script type="text/javascript" src="functions.js"></script> -->
+    <script type="text/javascript" src="functions.js"></script>
 
-    <title>SpaceLearner -たいようけい 太陽系-</title>
+    <title>うちゅうってなんだ？ -たいようけい 太陽系-</title>
 </head>
 
 <body>
-    <!-- ログイン部分はいったん省略 3/31 -->
-
     <script src="https://www.gstatic.com/firebasejs/5.9.2/firebase.js"></script>
 
     <script>
@@ -35,7 +33,6 @@
             firebase.auth().onAuthStateChanged((user) => {
                 let status = document.querySelector('#status');
                 if (user) {
-                    console.log("user: " + user.email);
                     console.log("Singed-in");
                     resolve(user.email);
                 } else {
@@ -45,7 +42,6 @@
         });
         promise.then(function (result) {
             umail = result;
-            console.log("email: " + umail);
         });
 
         setTimeout("PageDraw(umail)", 5000);
@@ -65,34 +61,19 @@
                             // console.log("magosnap.key: " + magosnap.key); //不規則文字列
                             anyKey = magosnap.key;
                             magosnap.forEach(function (himagosnap) {
-                                // console.log("himagosnap.key: " + himagosnap.key);
                                 if (himagosnap.key == "name") {
                                     var tmp = '';
                                     var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey);
                                     tmpRef.on('value', function (tmpsnap) {
                                         tmp = tmpsnap.val().name; //メールアドレスを取得。
-                                        console.log("tmp: " + tmp);
-                                        console.log("umail@tmpsnap: " + umail);
                                         if (umail == tmp) {
-                                            // console.log("■■ 登録済み。");
                                             resolve(currentId);
-                                            // hit++;
                                         }
                                     });
                                 }
-                                // console.log("hit@himagosnap: " + hit);
                             });
-                            // console.log("hit@magosnap: " + hit);
                         });
-                        // console.log("hit@children: " + hit);
-                        // if (hit == 0) {
-                        //     console.log("■■ 未登録。");
-                        // } else {
-                        //     console.log("■■ 登録済み。");
-                        // }
-                        // resolve(currentId);
                     });
-                    // console.log("hit@snapshot: " + hit);
                 });
             });
             promise2.then(function (result2) {
@@ -102,10 +83,6 @@
                 draw1(currentId);
             });
         }
-        //currentId と currentUser の部分は、認証機能実装時に改めて考えるので、
-        //今は固定のままとする。
-        // var currentId = '2';
-        // var currentUser = 'suzuki';
 
     </script>
 
@@ -119,7 +96,7 @@
 
     <script>
         function draw1(Id) {
-            console.log("### currentId@draw1: " + currentId);
+            console.log("### Id@draw1: " + Id);
             console.log("### draw1 start.");
             var htmlcode;
             var len = 1;
@@ -127,109 +104,205 @@
 
             var starCountRef = firebase.database().ref().child('users/' + Id);
             starCountRef.on('value', function (snapshot) {
-                // console.log(snapshot.val());
                 snapshot.forEach(function (children) {  //任意の文字列についてループ
                     anyKey = children.key;
-                    // console.log(anyKey);
                     //children.val().userIdとかで必要な値を取ればOK
                     children.forEach(function (magosnap) {
-                        // console.log(magosnap.val());
-                        // console.log(magosnap.key);
                         if (magosnap.key == 'taiyoukei') {
-                            // console.log(magosnap.val());
                             var htmlcode = "";
                             magosnap.forEach(function (himagosnap) {
-                                // console.log(himagosnap.key);
-                                // console.log(himagosnap.val());
                                 if (himagosnap.key == '01_taiyou') {
+                                    console.log('01_taiyou start.');
                                     htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/taiyoukei/' + himagosnap.key + '.png"></a></div>';
                                     htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
                                 }
                                 if (himagosnap.key == '02_suisei') {
+                                    console.log('02_suisei start.');
                                     var tmp = 0;
-                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/taiyoukei/01_taiyou');
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/taiyoukei/01_taiyou');
                                     tmpRef.on('value', function (tmpsnap) {
                                         tmp = tmpsnap.val().flag;
                                     });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
                                     if (tmp == 1) {
                                         htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/taiyoukei/' + himagosnap.key + '.jpg"></a></div>';
                                     }
                                     htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
                                 }
                                 if (himagosnap.key == '03_kinsei') {
+                                    console.log('03_kinsei start.');
                                     var tmp = 0;
-                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/taiyoukei/02_suisei');
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/taiyoukei/02_suisei');
                                     tmpRef.on('value', function (tmpsnap) {
                                         tmp = tmpsnap.val().flag;
                                     });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
                                     if (tmp == 1) {
                                         htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/taiyoukei/' + himagosnap.key + '.jpg"></a></div>';
                                     }
                                     htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
                                 }
-                                if (himagosnap.key == '04_chikyuu') {
+
+                                //クイズ1
+                                if (himagosnap.key == '04_taiyoukei_q1') {
+                                    console.log('04_taiyoukei_q1 start.');
                                     var tmp = 0;
-                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/taiyoukei/03_kinsei');
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/taiyoukei/03_kinsei');
                                     tmpRef.on('value', function (tmpsnap) {
                                         tmp = tmpsnap.val().flag;
                                     });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
+                                    if (tmp == 1) {
+                                        htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/quiz.png"></a></div>';
+                                    }
+                                    htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
+                                }
+
+                                if (himagosnap.key == '05_chikyuu') {
+                                    console.log('05_chikyuu start.');
+                                    var tmp = 0;
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/taiyoukei/04_taiyoukei_q1');
+                                    tmpRef.on('value', function (tmpsnap) {
+                                        tmp = tmpsnap.val().flag;
+                                    });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
                                     if (tmp == 1) {
                                         htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/taiyoukei/' + himagosnap.key + '.jpg"></a></div>';
                                     }
                                     htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
                                 }
-                                if (himagosnap.key == '05_kasei') {
+                                if (himagosnap.key == '06_kasei') {
+                                    console.log('06_kasei start.');
                                     var tmp = 0;
-                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/taiyoukei/04_chikyuu');
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/taiyoukei/05_chikyuu');
                                     tmpRef.on('value', function (tmpsnap) {
                                         tmp = tmpsnap.val().flag;
                                     });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
                                     if (tmp == 1) {
                                         htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/taiyoukei/' + himagosnap.key + '.jpg"></a></div>';
                                     }
                                     htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
                                 }
-                                if (himagosnap.key == '06_mokusei') {
+
+                                //クイズ2
+                                if (himagosnap.key == '07_taiyoukei_q2') {
+                                    console.log('07_taiyoukei_q2 start.');
                                     var tmp = 0;
-                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/taiyoukei/05_kasei');
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/taiyoukei/06_kasei');
                                     tmpRef.on('value', function (tmpsnap) {
                                         tmp = tmpsnap.val().flag;
                                     });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
+                                    if (tmp == 1) {
+                                        htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/quiz.png"></a></div>';
+                                    }
+                                    htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
+                                }
+
+                                if (himagosnap.key == '08_mokusei') {
+                                    console.log('08_mokusei start.');
+                                    var tmp = 0;
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/taiyoukei/07_taiyoukei_q2');
+                                    tmpRef.on('value', function (tmpsnap) {
+                                        tmp = tmpsnap.val().flag;
+                                    });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
                                     if (tmp == 1) {
                                         htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/taiyoukei/' + himagosnap.key + '.jpg"></a></div>';
                                     }
                                     htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
                                 }
-                                if (himagosnap.key == '07_dosei') {
+                                if (himagosnap.key == '09_dosei') {
+                                    console.log('09_dosei start.');
                                     var tmp = 0;
-                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/taiyoukei/06_mokusei');
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/taiyoukei/08_mokusei');
                                     tmpRef.on('value', function (tmpsnap) {
                                         tmp = tmpsnap.val().flag;
                                     });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
                                     if (tmp == 1) {
                                         htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/taiyoukei/' + himagosnap.key + '.jpg"></a></div>';
                                     }
                                     htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
                                 }
-                                if (himagosnap.key == '08_tennousei') {
+
+                                //クイズ3
+                                if (himagosnap.key == '10_taiyoukei_q3') {
+                                    console.log('10_taiyoukei_q3 start.');
                                     var tmp = 0;
-                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/taiyoukei/07_dosei');
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/taiyoukei/09_dosei');
                                     tmpRef.on('value', function (tmpsnap) {
                                         tmp = tmpsnap.val().flag;
                                     });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
+                                    if (tmp == 1) {
+                                        htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/quiz.png"></a></div>';
+                                    }
+                                    htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
+                                }
+
+                                if (himagosnap.key == '11_tennousei') {
+                                    console.log('11_tennousei start.');
+                                    var tmp = 0;
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/taiyoukei/10_taiyoukei_q3');
+                                    tmpRef.on('value', function (tmpsnap) {
+                                        tmp = tmpsnap.val().flag;
+                                    });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
                                     if (tmp == 1) {
                                         htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/taiyoukei/' + himagosnap.key + '.jpg"></a></div>';
                                     }
                                     htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
                                 }
-                                if (himagosnap.key == '09_kaiousei') {
+                                if (himagosnap.key == '12_kaiousei') {
+                                    console.log('12_kaiousei start.');
                                     var tmp = 0;
-                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/taiyoukei/08_tennousei');
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/taiyoukei/11_tennousei');
                                     tmpRef.on('value', function (tmpsnap) {
                                         tmp = tmpsnap.val().flag;
                                     });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
                                     if (tmp == 1) {
                                         htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/taiyoukei/' + himagosnap.key + '.jpg"></a></div>';
+                                    }
+                                    htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
+                                }
+                                //クイズ4
+                                if (himagosnap.key == '13_taiyoukei_q4') {
+                                    console.log('13_taiyoukei_q4 start.');
+                                    var tmp = 0;
+                                    var tmpRef2 = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/taiyoukei/12_kaiousei');
+                                    tmpRef2.on('value', function (tmpsnap2) {
+                                        tmp = tmpsnap2.val().flag;
+                                    });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
+                                    if (tmp == 1) {
+                                        htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/quiz.png"></a></div>';
                                     }
                                 }
                             });
@@ -240,7 +313,6 @@
             });
             console.log("### draw1 end.");
         }
-        // draw1(currentId);
     </script>
 
 </body>

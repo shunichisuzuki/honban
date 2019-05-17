@@ -35,14 +35,14 @@
                 <div><img id="03_kinsei" src="img/hatena.png" alt="金星"></div>
             </div>
             <div class="coin_box">
-                <div><img id="04_chikyuu" src="img/hatena.png" alt="地球"></div>
-                <div><img id="05_kasei" src="img/hatena.png" alt="火星"></div>
-                <div><img id="06_mokusei" src="img/hatena.png" alt="木星"></div>
+                <div><img id="05_chikyuu" src="img/hatena.png" alt="地球"></div>
+                <div><img id="06_kasei" src="img/hatena.png" alt="火星"></div>
+                <div><img id="08_mokusei" src="img/hatena.png" alt="木星"></div>
             </div>
             <div class="coin_box">
-                <div><img id="07_dosei" src="img/hatena.png" alt="土星"></div>
-                <div><img id="08_tennousei" src="img/hatena.png" alt="天王星"></div>
-                <div><img id="09_kaiousei" src="img/hatena.png" alt="海王星 "></div>
+                <div><img id="09_dosei" src="img/hatena.png" alt="土星"></div>
+                <div><img id="11_tennousei" src="img/hatena.png" alt="天王星"></div>
+                <div><img id="12_kaiousei" src="img/hatena.png" alt="海王星 "></div>
             </div>
         </div>
 
@@ -50,22 +50,22 @@
             <div class="coin_box">
                 <div><img id="01_ohitsuji" src="img/hatena.png" alt="牡羊座"></div>
                 <div><img id="02_oushi" src="img/hatena.png" alt="牡牛座"></div>
-                <div><img id="03_futago" src="img/hatena.png" alt="双子座"></div>
+                <div><img id="04_futago" src="img/hatena.png" alt="双子座"></div>
             </div>
             <div class="coin_box">
-                <div><img id="04_kani" src="img/hatena.png" alt="蟹座"></div>
-                <div><img id="05_shishi" src="img/hatena.png" alt="獅子座"></div>
-                <div><img id="06_otome" src="img/hatena.png" alt="乙女座"></div>
+                <div><img id="05_kani" src="img/hatena.png" alt="蟹座"></div>
+                <div><img id="07_shishi" src="img/hatena.png" alt="獅子座"></div>
+                <div><img id="08_otome" src="img/hatena.png" alt="乙女座"></div>
             </div>
             <div class="coin_box">
-                <div><img id="07_tenbin" src="img/hatena.png" alt="天秤座"></div>
-                <div><img id="08_sasori" src="img/hatena.png" alt="蠍座"></div>
-                <div><img id="09_ite" src="img/hatena.png" alt="射手座"></div>
+                <div><img id="10_tenbin" src="img/hatena.png" alt="天秤座"></div>
+                <div><img id="11_sasori" src="img/hatena.png" alt="蠍座"></div>
+                <div><img id="13_ite" src="img/hatena.png" alt="射手座"></div>
             </div>
             <div class="coin_box">
-                <div><img id="10_yagi" src="img/hatena.png" alt="山羊座"></div>
-                <div><img id="11_mizugame" src="img/hatena.png" alt="水瓶座"></div>
-                <div><img id="12_uo" src="img/hatena.png" alt="魚座"></div>
+                <div><img id="14_yagi" src="img/hatena.png" alt="山羊座"></div>
+                <div><img id="16_mizugame" src="img/hatena.png" alt="水瓶座"></div>
+                <div><img id="17_uo" src="img/hatena.png" alt="魚座"></div>
             </div>
         </div>
 
@@ -89,23 +89,32 @@
             var starCountRef = firebase.database().ref().child('users/' + Id);
             starCountRef.on('value', function (snapshot) {
                 snapshot.forEach(function (children) {
-                    anyKey = children.key;
+                    var anyKey = children.key;
                     children.forEach(function (magosnap) {
                         if (magosnap.key == 'taiyoukei') {
                             magosnap.forEach(function (himagosnap) {
-                                console.log(himagosnap.val().flag);
-                                anyWakusei = himagosnap.key;
-                                if (himagosnap.val().flag == 1) {
+                                // console.log(himagosnap.val().flag);
+                                var anyWakusei = himagosnap.key;
+                                console.log('anyWakusei@tai: ' + anyWakusei);
+                                // if (anyWakusei.indexOf('shinwa_q') == -1) {
+                                //     console.log('-->out.');
+                                // }
+
+                                if (anyWakusei.indexOf('taiyoukei_q') == -1 && himagosnap.val().flag == 1) {
                                     document.getElementById(anyWakusei).src = "img/medal_taiyoukei/medal_" + anyWakusei + ".png";
                                 }
                             });
                         }
                         if (magosnap.key == 'shinwa') {
                             magosnap.forEach(function (himagosnap) {
-                                console.log(himagosnap.val().flag);
-                                anyShinwa = himagosnap.key;
-                                console.log(anyShinwa);
-                                if (himagosnap.val().flag == 1) {
+                                // console.log(himagosnap.val().flag);
+                                var anyShinwa = himagosnap.key;
+                                // console.log('anyShinwa@tai: ' + anyShinwa);
+                                // console.log(anyShinwa.indexOf('shinwa_q'));
+                                // if (anyShinwa.indexOf('shinwa_q') == -1) {
+                                //     console.log('-->非対象');
+                                // }
+                                if (anyShinwa.indexOf('shinwa_q') == -1 && himagosnap.val().flag == 1) {
                                     document.getElementById(anyShinwa).src = "img/medal_shinwa/medal_" + anyShinwa + ".png";
                                 }
                             });

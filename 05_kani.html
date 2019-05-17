@@ -15,7 +15,7 @@
     <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase.js"></script>
     <script type="text/javascript" src="logincheck.js"></script>
 
-    <title>うちゅうってなんだ？ -どせい 土星-</title>
+    <title>うちゅうってなんだ？ -かにざ 蟹座-</title>
 
     <script src="https://www.gstatic.com/firebasejs/5.9.2/firebase.js"></script>
     <script src="https://cdn.firebase.com/js/client/2.0.4/firebase.js"></script>
@@ -25,7 +25,7 @@
 </head>
 
 <body>
-    <h1>土星についての動画</h1>
+    <h1>蟹座についての動画</h1>
     <div id="movie"></div>
     <div></div>
 
@@ -37,7 +37,7 @@
             firebase.initializeApp(config);
         }
 
-        var currentPage = '07_dosei';
+        var currentPage = '05_kani';
 
         var currentId = 0;
         var currentTime = 0;
@@ -81,7 +81,7 @@
             player = new YT.Player('movie', {
                 height: '360',
                 width: '640',
-                videoId: 'QXMevt_4C-E',
+                videoId: 'SQXSS2v5pUA',
                 playerVars: {
                     autoplay: 1,
                     showinfo: 0,
@@ -132,7 +132,7 @@
                                 }
                                 var newData = writeNewPost(getCT, currentFlag);
                                 var updates = {};
-                                updates['users/' + currentId + '/' + anyKey + '/taiyoukei/' + currentPage] = newData;
+                                updates['users/' + currentId + '/' + anyKey + '/shinwa/' + currentPage] = newData;
 
                                 if (update_num == 0) {
                                     firebase.database().ref().update(updates);

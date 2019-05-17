@@ -53,7 +53,6 @@
             firebase.auth().onAuthStateChanged((user) => {
                 let status = document.querySelector('#status');
                 if (user) {
-                    console.log("user: " + user.email);
                     console.log("Singed-in");
                     resolve(user.email);
                 } else {
@@ -63,7 +62,6 @@
         });
         promise.then(function (result) {
             umail = result;
-            console.log("email: " + umail);
         });
 
         //5秒後にユーザ存在チェック処理を実行
@@ -85,49 +83,36 @@
                             // console.log("magosnap.key: " + magosnap.key); //不規則文字列
                             anyKey = magosnap.key;
                             magosnap.forEach(function (himagosnap) {
-                                // console.log("himagosnap.key: " + himagosnap.key);
                                 if (himagosnap.key == "name") {
                                     var tmp = '';
                                     var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey);
                                     tmpRef.on('value', function (tmpsnap) {
                                         tmp = tmpsnap.val().name; //メールアドレスを取得。
-                                        console.log("tmp: " + tmp);
-                                        console.log("umail@tmpsnap: " + mail);
                                         if (mail == tmp) {
-                                            // console.log("■■ 登録済み。");
                                             hit = 1;
                                         }
                                     });
                                 }
-                                // console.log("hit@himagosnap: " + hit);
                             });
-                            // console.log("hit@magosnap: " + hit);
                         });
-                        // console.log("hit@children: " + hit);
                     });
-                    console.log("hit@snapshot: " + hit);
                     if (hit == 0) {
                         console.log("■■ 未登録。");
                     } else {
-                        // hit = 1;
                         console.log("■■ 登録済み。");
                     }
                     resolve(hit);
                 });
             });
             promise2.then(function (result2) {
-                console.log("result2: " + result2);
                 // 新規ユーザの場合、firebaseに各動画視聴の時間とフラグを格納する
                 // 枠を作る。
                 if (result2 == 0) {
-                    console.log("insNum@promise2.then: " + insNum);
                     console.log("### User Data Creation will start.");
                     var insNum = 0;
                     var starCountRef = firebase.database().ref().child('users/');
                     starCountRef.on('value', function (snapshot) {
-                        console.log("snapshot.val().length: " + snapshot.val().length);
                         var currentUserNum = snapshot.val().length - 1;
-                        console.log("currentUserNum: " + currentUserNum);
                         var nextUserNum = snapshot.val().length;
                         if (insNum == 0) {
                             var promise = new Promise(function (resolve, reject) {
@@ -157,27 +142,37 @@
                 shinwa: {
                     "01_ohitsuji": { currentTime: 0, flag: 0 },
                     "02_oushi": { currentTime: 0, flag: 0 },
-                    "03_futago": { currentTime: 0, flag: 0 },
-                    "04_kani": { currentTime: 0, flag: 0 },
-                    "05_shishi": { currentTime: 0, flag: 0 },
-                    "06_otome": { currentTime: 0, flag: 0 },
-                    "07_tenbin": { currentTime: 0, flag: 0 },
-                    "08_sasori": { currentTime: 0, flag: 0 },
-                    "09_ite": { currentTime: 0, flag: 0 },
-                    "10_yagi": { currentTime: 0, flag: 0 },
-                    "11_mizugame": { currentTime: 0, flag: 0 },
-                    "12_uo": { currentTime: 0, flag: 0 }
+                    "03_shinwa_q1": { flag: 0 },
+                    "04_futago": { currentTime: 0, flag: 0 },
+                    "05_kani": { currentTime: 0, flag: 0 },
+                    "06_shinwa_q2": { flag: 0 },
+                    "07_shishi": { currentTime: 0, flag: 0 },
+                    "08_otome": { currentTime: 0, flag: 0 },
+                    "09_shinwa_q3": { flag: 0 },
+                    "10_tenbin": { currentTime: 0, flag: 0 },
+                    "11_sasori": { currentTime: 0, flag: 0 },
+                    "12_shinwa_q4": { flag: 0 },
+                    "13_ite": { currentTime: 0, flag: 0 },
+                    "14_yagi": { currentTime: 0, flag: 0 },
+                    "15_shinwa_q5": { flag: 0 },
+                    "16_mizugame": { currentTime: 0, flag: 0 },
+                    "17_uo": { currentTime: 0, flag: 0 },
+                    "18_shinwa_q6": { flag: 0 }
                 },
                 taiyoukei: {
                     "01_taiyou": { currentTime: 0, flag: 0 },
                     "02_suisei": { currentTime: 0, flag: 0 },
                     "03_kinsei": { currentTime: 0, flag: 0 },
-                    "04_chikyuu": { currentTime: 0, flag: 0 },
-                    "05_kasei": { currentTime: 0, flag: 0 },
-                    "06_mokusei": { currentTime: 0, flag: 0 },
-                    "07_dosei": { currentTime: 0, flag: 0 },
-                    "08_tennousei": { currentTime: 0, flag: 0 },
-                    "09_keiousei": { currentTime: 0, flag: 0 }
+                    "04_taiyoukei_q1": { flag: 0 },
+                    "05_chikyuu": { currentTime: 0, flag: 0 },
+                    "06_kasei": { currentTime: 0, flag: 0 },
+                    "07_taiyoukei_q2": { flag: 0 },
+                    "08_mokusei": { currentTime: 0, flag: 0 },
+                    "09_dosei": { currentTime: 0, flag: 0 },
+                    "10_taiyoukei_q3": { flag: 0 },
+                    "11_tennousei": { currentTime: 0, flag: 0 },
+                    "12_kaiousei": { currentTime: 0, flag: 0 },
+                    "13_taiyoukei_q4": { flag: 0 }
                 }
             });
         }

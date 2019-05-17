@@ -13,7 +13,7 @@
     <!-- <script type="text/javascript" src="logincheck.js"></script> -->
     <script type="text/javascript" src="ifb.js"></script>
 
-    <title>SpaceLearner -しんわ 神話-</title>
+    <title>うちゅうってなんだ？ -しんわ 神話-</title>
 </head>
 
 <body>
@@ -29,7 +29,6 @@
             firebase.auth().onAuthStateChanged((user) => {
                 let status = document.querySelector('#status');
                 if (user) {
-                    console.log("user: " + user.email);
                     console.log("Singed-in");
                     resolve(user.email);
                 } else {
@@ -39,7 +38,6 @@
         });
         promise.then(function (result) {
             umail = result;
-            console.log("email: " + umail);
 
             //既存ユーザかどうかをチェック
             var promise2 = new Promise(function (resolve, reject) {
@@ -56,37 +54,28 @@
                             // console.log("magosnap.key: " + magosnap.key); //不規則文字列
                             anyKey = magosnap.key;
                             magosnap.forEach(function (himagosnap) {
-                                // console.log("himagosnap.key: " + himagosnap.key);
                                 if (himagosnap.key == "name") {
                                     var tmp = '';
                                     var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey);
                                     tmpRef.on('value', function (tmpsnap) {
                                         tmp = tmpsnap.val().name; //メールアドレスを取得。
-                                        console.log("tmp: " + tmp);
-                                        console.log("umail@tmpsnap: " + umail);
                                         if (umail == tmp) {
-                                            // console.log("■■ 登録済み。");
-                                            hit++;
+                                            hit = 1;
+                                            resolve(currentId);
                                         }
                                     });
                                 }
-                                // console.log("hit@himagosnap: " + hit);
                             });
-                            // console.log("hit@magosnap: " + hit);
                         });
-                        // console.log("hit@children: " + hit);
                         if (hit == 0) {
-                            console.log("■■ 未登録。");
+                            // console.log("■■ 未登録。");
                         } else {
                             console.log("■■ 登録済み。");
                         }
-                        resolve(currentId);
                     });
-                    // console.log("hit@snapshot: " + hit);
                 });
             });
             promise2.then(function (result2) {
-                console.log("result2: " + result2);
                 draw1(result2);
             });
         });
@@ -100,175 +89,301 @@
     <div id="video"></div>
 
     <script>
-        function draw1(currentId) {
-            // var htmlcode = "";
+        function draw1(Id) {
+            console.log('###### ' + Id + ' draw start.');
             var htmlcode;
             var len = 1;
             var div = document.getElementById('test');
 
-            var starCountRef = firebase.database().ref().child('users/' + currentId);
+            var starCountRef = firebase.database().ref().child('users/' + Id);
             starCountRef.on('value', function (snapshot) {
-                // console.log(snapshot.val());
                 snapshot.forEach(function (children) {  //任意の文字列についてループ
                     anyKey = children.key;
-                    // console.log(anyKey);
                     //children.val().userIdとかで必要な値を取ればOK
                     children.forEach(function (magosnap) {
-                        // console.log(magosnap.val());
-                        // console.log(magosnap.key);
                         if (magosnap.key == 'shinwa') {
-                            // console.log(magosnap.val());
                             var htmlcode = "";
                             magosnap.forEach(function (himagosnap) {
-                                // console.log(himagosnap.key);
-                                // console.log(himagosnap.val());
                                 if (himagosnap.key == '01_ohitsuji') {
+                                    console.log(himagosnap.key + ' start.');
                                     htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/shinwa/' + himagosnap.key + '.png"></a></div>';
                                     htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
-                                    // console.log(htmlcode);
                                 }
                                 if (himagosnap.key == '02_oushi') {
+                                    console.log(himagosnap.key + ' start.');
                                     var tmp = 0;
-                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/shinwa/01_ohitsuji');
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/shinwa/01_ohitsuji');
                                     tmpRef.on('value', function (tmpsnap) {
                                         tmp = tmpsnap.val().flag;
-                                        // console.log(tmp);
                                     });
-                                    if (tmp == 1) {
-                                        htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/shinwa/' + himagosnap.key + '.png"></a></div>';
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
                                     }
-                                    htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
-                                    // console.log(htmlcode);
-                                }
-                                if (himagosnap.key == '03_futago') {
-                                    var tmp = 0;
-                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/shinwa/02_oushi');
-                                    tmpRef.on('value', function (tmpsnap) {
-                                        tmp = tmpsnap.val().flag;
-                                        // console.log(tmp);
-                                    });
                                     if (tmp == 1) {
                                         htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/shinwa/' + himagosnap.key + '.png"></a></div>';
                                     }
                                     htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
                                 }
-                                if (himagosnap.key == '04_kani') {
+
+                                //クイズ1
+                                if (himagosnap.key == '03_shinwa_q1') {
+                                    console.log(himagosnap.key + ' start.');
                                     var tmp = 0;
-                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/shinwa/03_futago');
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/shinwa/02_oushi');
                                     tmpRef.on('value', function (tmpsnap) {
                                         tmp = tmpsnap.val().flag;
-                                        // console.log(tmp);
                                     });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
+                                    if (tmp == 1) {
+                                        htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/quiz.png"></a></div>';
+                                    }
+                                    htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
+                                }
+
+                                if (himagosnap.key == '04_futago') {
+                                    console.log(himagosnap.key + ' start.');
+                                    var tmp = 0;
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/shinwa/03_shinwa_q1');
+                                    tmpRef.on('value', function (tmpsnap) {
+                                        tmp = tmpsnap.val().flag;
+                                    });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
                                     if (tmp == 1) {
                                         htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/shinwa/' + himagosnap.key + '.png"></a></div>';
                                     }
                                     htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
                                 }
-                                if (himagosnap.key == '05_shishi') {
+                                if (himagosnap.key == '05_kani') {
+                                    console.log(himagosnap.key + ' start.');
                                     var tmp = 0;
-                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/shinwa/04_kani');
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/shinwa/04_futago');
                                     tmpRef.on('value', function (tmpsnap) {
                                         tmp = tmpsnap.val().flag;
-                                        // console.log(tmp);
-                                    });
-                                    if (tmp == 1) {
-                                        htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/shinwa/' + himagosnap.key + '.png"></a></div>';
-                                    }
-                                    htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
-                                }
-                                if (himagosnap.key == '06_otome') {
-                                    var tmp = 0;
-                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/shinwa/05_shishi');
-                                    tmpRef.on('value', function (tmpsnap) {
-                                        tmp = tmpsnap.val().flag;
-                                        // console.log(tmp);
-                                    });
-                                    if (tmp == 1) {
-                                        htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/shinwa/' + himagosnap.key + '.png"></a></div>';
-                                    }
-                                    htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
-                                }
-                                if (himagosnap.key == '07_tenbin') {
-                                    var tmp = 0;
-                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/shinwa/06_otome');
-                                    tmpRef.on('value', function (tmpsnap) {
-                                        tmp = tmpsnap.val().flag;
-                                        // console.log(tmp);
                                     });
                                     if (tmp == 1) {
                                         htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/shinwa/' + himagosnap.key + '.png"></a></div>';
                                     }
                                     htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
                                 }
-                                if (himagosnap.key == '08_sasori') {
+
+                                //クイズ2
+                                if (himagosnap.key == '06_shinwa_q2') {
+                                    console.log(himagosnap.key + ' start.');
                                     var tmp = 0;
-                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/shinwa/07_tenbin');
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/shinwa/05_kani');
                                     tmpRef.on('value', function (tmpsnap) {
                                         tmp = tmpsnap.val().flag;
-                                        // console.log(tmp);
                                     });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
+                                    if (tmp == 1) {
+                                        htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/quiz.png"></a></div>';
+                                    }
+                                    htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
+                                }
+
+                                if (himagosnap.key == '07_shishi') {
+                                    console.log(himagosnap.key + ' start.');
+                                    var tmp = 0;
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/shinwa/06_shinwa_q2');
+                                    tmpRef.on('value', function (tmpsnap) {
+                                        tmp = tmpsnap.val().flag;
+                                    });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
                                     if (tmp == 1) {
                                         htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/shinwa/' + himagosnap.key + '.png"></a></div>';
                                     }
                                     htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
                                 }
-                                if (himagosnap.key == '09_ite') {
+                                if (himagosnap.key == '08_otome') {
+                                    console.log(himagosnap.key + ' start.');
                                     var tmp = 0;
-                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/shinwa/08_sasori');
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/shinwa/07_shishi');
                                     tmpRef.on('value', function (tmpsnap) {
                                         tmp = tmpsnap.val().flag;
-                                        // console.log(tmp);
                                     });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
                                     if (tmp == 1) {
                                         htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/shinwa/' + himagosnap.key + '.png"></a></div>';
                                     }
                                     htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
                                 }
-                                if (himagosnap.key == '10_yagi') {
+
+                                //クイズ3
+                                if (himagosnap.key == '09_shinwa_q3') {
+                                    console.log(himagosnap.key + ' start.');
                                     var tmp = 0;
-                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/shinwa/09_ite');
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/shinwa/08_otome');
                                     tmpRef.on('value', function (tmpsnap) {
                                         tmp = tmpsnap.val().flag;
-                                        // console.log(tmp);
                                     });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
+                                    if (tmp == 1) {
+                                        htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/quiz.png"></a></div>';
+                                    }
+                                    htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
+                                }
+
+                                if (himagosnap.key == '10_tenbin') {
+                                    console.log(himagosnap.key + ' start.');
+                                    var tmp = 0;
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/shinwa/09_shinwa_q3');
+                                    tmpRef.on('value', function (tmpsnap) {
+                                        tmp = tmpsnap.val().flag;
+                                    });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
                                     if (tmp == 1) {
                                         htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/shinwa/' + himagosnap.key + '.png"></a></div>';
                                     }
                                     htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
                                 }
-                                if (himagosnap.key == '11_mizugame') {
+                                if (himagosnap.key == '11_sasori') {
+                                    console.log(himagosnap.key + ' start.');
                                     var tmp = 0;
-                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/shinwa/10_yagi');
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/shinwa/10_tenbin');
                                     tmpRef.on('value', function (tmpsnap) {
                                         tmp = tmpsnap.val().flag;
-                                        // console.log(tmp);
                                     });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
                                     if (tmp == 1) {
                                         htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/shinwa/' + himagosnap.key + '.png"></a></div>';
                                     }
                                     htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
                                 }
-                                if (himagosnap.key == '12_uo') {
+
+                                //クイズ4
+                                if (himagosnap.key == '12_shinwa_q4') {
+                                    console.log(himagosnap.key + ' start.');
                                     var tmp = 0;
-                                    var tmpRef = firebase.database().ref().child('users/' + currentId + '/' + anyKey + '/shinwa/11_mizugame');
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/shinwa/11_sasori');
                                     tmpRef.on('value', function (tmpsnap) {
                                         tmp = tmpsnap.val().flag;
-                                        // console.log(tmp);
                                     });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
+                                    if (tmp == 1) {
+                                        htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/quiz.png"></a></div>';
+                                    }
+                                    htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
+                                }
+
+                                if (himagosnap.key == '13_ite') {
+                                    console.log(himagosnap.key + ' start.');
+                                    var tmp = 0;
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/shinwa/12_shinwa_q4');
+                                    tmpRef.on('value', function (tmpsnap) {
+                                        tmp = tmpsnap.val().flag;
+                                    });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
                                     if (tmp == 1) {
                                         htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/shinwa/' + himagosnap.key + '.png"></a></div>';
+                                    }
+                                    htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
+                                }
+                                if (himagosnap.key == '14_yagi') {
+                                    console.log(himagosnap.key + ' start.');
+                                    var tmp = 0;
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/shinwa/13_ite');
+                                    tmpRef.on('value', function (tmpsnap) {
+                                        tmp = tmpsnap.val().flag;
+                                    });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
+                                    if (tmp == 1) {
+                                        htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/shinwa/' + himagosnap.key + '.png"></a></div>';
+                                    }
+                                    htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
+                                }
+
+                                //クイズ5
+                                if (himagosnap.key == '15_shinwa_q5') {
+                                    console.log(himagosnap.key + ' start.');
+                                    var tmp = 0;
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/shinwa/14_yagi');
+                                    tmpRef.on('value', function (tmpsnap) {
+                                        tmp = tmpsnap.val().flag;
+                                    });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
+                                    if (tmp == 1) {
+                                        htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/quiz.png"></a></div>';
+                                    }
+                                    htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
+                                }
+
+                                if (himagosnap.key == '16_mizugame') {
+                                    console.log(himagosnap.key + ' start.');
+                                    var tmp = 0;
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/shinwa/15_shinwa_q5');
+                                    tmpRef.on('value', function (tmpsnap) {
+                                        tmp = tmpsnap.val().flag;
+                                    });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
+                                    if (tmp == 1) {
+                                        htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/shinwa/' + himagosnap.key + '.png"></a></div>';
+                                    }
+                                    htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
+                                }
+                                if (himagosnap.key == '17_uo') {
+                                    console.log(himagosnap.key + ' start.');
+                                    var tmp = 0;
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/shinwa/16_mizugame');
+                                    tmpRef.on('value', function (tmpsnap) {
+                                        tmp = tmpsnap.val().flag;
+                                    });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
+                                    if (tmp == 1) {
+                                        htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/shinwa/' + himagosnap.key + '.png"></a></div>';
+                                    }
+                                    htmlcode += '<div><img width="60%" src="img/yajirushi.jpg"></div>';
+                                }
+
+                                //クイズ5
+                                if (himagosnap.key == '18_shinwa_q6') {
+                                    console.log(himagosnap.key + ' start.');
+                                    var tmp = 0;
+                                    var tmpRef = firebase.database().ref().child('users/' + Id + '/' + anyKey + '/shinwa/17_uo');
+                                    tmpRef.on('value', function (tmpsnap) {
+                                        tmp = tmpsnap.val().flag;
+                                    });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
+                                    if (tmp == 1) {
+                                        htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/quiz.png"></a></div>';
                                     }
                                 }
                             });
-                            // console.log(htmlcode);
                             div.innerHTML = htmlcode;
                         }
-                        // console.log(htmlcode);
                     });
                 });
             });
         }
-        // draw1();
     </script>
 
 </body>

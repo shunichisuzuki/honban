@@ -14,6 +14,8 @@
     <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.css" />
     <script type="text/javascript" src="ifb.js"></script>
 
+    <link rel="manifest" href="/manifest.json">
+
     <script>
         // FirebaseUIインスタンス初期化
         var ui = new firebaseui.auth.AuthUI(firebase.auth());
@@ -38,10 +40,7 @@
             signInOptions: [
                 // サポートするプロバイダ(メールアドレス)を指定
                 firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-                // firebase.auth.EmailAuthProvider.PROVIDER_ID,
             ],
-            // Terms of service url.(サービス利用規約ページの)
-            // tosUrl: '<your-tos-url>'
         };
 
         // FirebaseUI描画開始
@@ -70,6 +69,17 @@
         <div id="firebaseui-auth-container"></div>
         <div id="loader">Loading...</div>
     </center>
+
+    <script>
+        //ここにJavaScriptを記述していく
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').then(function () {
+                console.log('サービスワーカーの登録成功');
+            }).catch(function (err) {
+                console.log('サービスワーカーの登録ができませんでした：', err);
+            });
+        }
+    </script>
 </body>
 
 </html>
