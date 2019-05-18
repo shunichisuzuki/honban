@@ -37,6 +37,7 @@
             // リダイレクトではなく、ポップアップでサインインフローを表示
             signInFlow: 'popup',
             signInSuccessUrl: 'top.html',
+            credentialHelper: firebaseui.auth.CredentialHelper.NONE,
             signInOptions: [
                 // サポートするプロバイダ(メールアドレス)を指定
                 firebase.auth.GoogleAuthProvider.PROVIDER_ID,
