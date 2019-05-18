@@ -53,7 +53,6 @@ var urlsToCache = [
     '/img/doctor.jpg',
     '/img/hatena.jpg',
     '/img/hatena.png',
-    '/img/hoshizora',
     '/img/hoshizora.jpg',
     '/img/module_table_bottom.png',
     '/img/module_table_top.png',
