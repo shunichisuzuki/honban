@@ -86,6 +86,7 @@
         setTimeout("getcoin(currentId)", 6000);
 
         function getcoin(Id) {
+            var Id = currentId;
             console.log('Id: '+ Id);
             var starCountRef = firebase.database().ref().child('users/' + Id);
             starCountRef.on('value', function (snapshot) {
