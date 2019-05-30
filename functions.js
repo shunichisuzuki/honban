@@ -19,6 +19,8 @@ function getId(mail) {
                             tmpRef.on('value', function (tmpsnap) {
                                 tmp = tmpsnap.val().name; //メールアドレスを取得。
                                 if (mail == tmp) {
+                                    console.log('mail: ' + mail);
+                                    console.log('currentId: ' + currentId);
                                     resolve(currentId);
                                 }
                             });
