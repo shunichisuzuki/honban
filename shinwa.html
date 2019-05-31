@@ -164,6 +164,9 @@
                                     tmpRef.on('value', function (tmpsnap) {
                                         tmp = tmpsnap.val().flag;
                                     });
+                                    if (tmp == 0) {
+                                        htmlcode += '<div><img width="60%" src="img/hatena.jpg"></div>';
+                                    }
                                     if (tmp == 1) {
                                         htmlcode += '<div><a href="' + himagosnap.key + '.html" target="_blank"><img width="60%" src="img/shinwa/' + himagosnap.key + '.png"></a></div>';
                                     }
