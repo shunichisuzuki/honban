@@ -19,8 +19,6 @@ function getId(mail) {
                             tmpRef.on('value', function (tmpsnap) {
                                 tmp = tmpsnap.val().name; //メールアドレスを取得。
                                 if (mail == tmp) {
-                                    console.log('mail: ' + mail);
-                                    console.log('currentId: ' + currentId);
                                     resolve(currentId);
                                 }
                             });
@@ -133,6 +131,17 @@ function writeNewPost(getCT, currentFlag) {
 
 function qflagchange(Id, Page) {
     console.log('### Flag Change start.');
+    console.log('Id: ' + Id);
+    console.log('Page: ' + Page);
+
+    if (Page.indexOf('taiyoukei_q') != -1) {
+        Category = 'taiyoukei';
+    }
+    if (Page.indexOf('shinwa_q') != -1) {
+        Category = 'shinwa';
+    }
+    console.log('Category: ' + Category);
+
     if (!firebase.apps.length) {
         firebase.initializeApp(config);
     }
@@ -147,13 +156,15 @@ function qflagchange(Id, Page) {
                 magosnap.forEach(function (himagosnap) {
                     if (himagosnap.key == Page) {
                         var currentFlag = 1;
+                        console.log('currentFlag: ' + currentFlag);
                         var newData = { flag: currentFlag };
                         var updates = {};
-                        updates['users/' + Id + '/' + anyKey + '/shinwa/' + Page] = newData;
+                        updates['users/' + Id + '/' + anyKey + '/' + Category + '/' + Page] = newData;
                         if (update_num == 0) {
                             console.log('### Flag update start.');
                             firebase.database().ref().update(updates);
                             update_num = 1;
+                            console.log('update_num: ' + update_num);
                             console.log('### Flag update end.');
                         }
                     }
